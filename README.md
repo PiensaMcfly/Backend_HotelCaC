@@ -27,7 +27,7 @@ Para ejecutar el proyecto localmente, sigue estos pasos:
 1. Clona el repositorio desde GitHub:
 
    ```bash
-   git clone https://github.com/dbm4x/Backend_HotelCaC.git
+   git clone https://github.com/PiensaMcfly/Backend_HotelCaC.git
    ```
 2. Instala las dependencias
 
