@@ -100,30 +100,46 @@ module.exports = {
 		}
 	},
 	eliminarHabitacion: async (req, res) => {
+		let connection;
 		try {
-			const sql = `
-                DELETE FROM habitaciones
-                where id = ?
-            `;
-			const status = await conn.query(sql, [req.params.id]);
-			if (status) {
-				const sql = `
-                SELECT h.*, th.descripcion AS habitacionTipo
-                FROM habitaciones h
-                LEFT JOIN tipoHabitacion th ON h.tipoHab_id = th.id
-            `;
-				const [registros] = await conn.query(sql);
-				res.json(registros);
-			} else {
-				return res.status(400).json({ mensaje: 'Error al eliminar' });
-			}
+			connection = await conn.getConnection();
+			await connection.beginTransaction();
+
+			const updateRelatedRecordsQuery = `
+				UPDATE reservas
+				SET habitacionId = NULL
+				WHERE habitacionId = ?
+			`;
+			await connection.query(updateRelatedRecordsQuery, [req.params.id]);
+
+			const deleteHabitacionQuery = `
+				DELETE FROM habitaciones
+				WHERE id = ?
+			`;
+			await connection.query(deleteHabitacionQuery, [req.params.id]);
+	
+
+			await connection.commit();
+	
+			const selectQuery = `
+				SELECT h.*, th.descripcion AS habitacionTipo
+				FROM habitaciones h
+				LEFT JOIN tipoHabitacion th ON h.tipoHab_id = th.id
+			`;
+			const [registros] = await connection.query(selectQuery);
+			res.json(registros);
 		} catch (error) {
-			throw error;
+			if (connection) {
+				await connection.rollback();
+			}
+			console.error("Error al eliminar habitación:", error);
+			res.status(500).json({ mensaje: 'Error al eliminar la habitación' });
 		} finally {
-			conn.releaseConnection();
+			if (connection) {
+				connection.release();
+			}
 		}
 	},
-
 	nuevaHabitacion: async (req, res) => {
 		try {
 			upload.single('foto')(req, res, async (err) => {
