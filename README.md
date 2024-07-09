@@ -16,7 +16,7 @@ El proyecto permite a los usuarios buscar habitaciones disponibles, realizar res
 El proyecto utiliza las siguientes tecnologías y herramientas:
 
 - **Backend**: Node.js, Express.js.
-- **Base de Datos**: Mysql
+- **Base de Datos**: MySQL (clever cloud)
 - **Autenticación**: JWT (JSON Web Tokens) para la autenticación de usuarios.
 - **Control de Versiones**: Git y GitHub.
 
@@ -31,12 +31,12 @@ Para ejecutar el proyecto localmente, sigue estos pasos:
    ```
 2. Instala las dependencias
 
-  ```bash
+   ```bash
    npm install
    ```
 3. Corre el programa!
 
-  ```bash
+   ```bash
    node app.js
    ```
    
